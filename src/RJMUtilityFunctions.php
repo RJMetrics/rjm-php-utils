@@ -472,7 +472,7 @@ function alternate_json_encode($a = false) {
 }
 
 //this function takes a mutable object and returns a new immuable copy of that object
-function freeze(Model $model) {
+function freeze($model) {
 	if(is_null($model))
 		throw new Exception("Can't freeze a null object");
 
@@ -482,7 +482,7 @@ function freeze(Model $model) {
 
 //this function takes an immutable object and returns a new mutable copy of that object
 //mutable objects should be used in the tightest scope possible -- try not to pass them unless performance requirements demand it
-function mutable(Model $model) {
+function mutable($model) {
 	if(is_null($model))
 		throw new Exception("Can't unfreeze a null object");
 
