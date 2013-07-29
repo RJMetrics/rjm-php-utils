@@ -575,5 +575,32 @@ function decomposeAssocArray(){
 	return $r;
 }
 
+/*
+This function should be used, instead of the require_once statement, whenever requiring a file
+from a composer package. It temporarily replaces the include path with one limited to the package
+directory and the vendor directory. This allows references between packages to always be resolved
+correctly.
+
+Additionally, attempting to require a non-existant file will return a catchable exception w/
+stack trace, instead of a fatal error.
+
+Example: composer_require_once('rjmetrics/phinch','ImmutableModel.php');
+
+*/
+function composer_require_once($lib, $filename){
+	$originalPath = get_include_path();
+	$libPath = "vendor/$lib";
+	set_include_path("vendor:$libPath");
+	$requiredFile = "src/$filename";
+
+	if (stream_resolve_include_path($requiredFile))
+		require_once $requiredFile;
+	else
+		throw new Exception("composer_require_once -> require_once({$requiredFile}): failed to open stream");
+
+	set_include_path($originalPath);
+}
+
+
 ?>
 
