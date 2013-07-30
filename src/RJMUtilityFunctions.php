@@ -208,6 +208,8 @@ function __pr($o, $depth, $max){
 		return "[Logger]";  
 	if (is_bool($o))
 		return $o ? '[TRUE]' : '[FALSE]';
+	if (is_a($o, 'Closure'))
+		return '[Closure]';
 		
 	
 	$c = "array";
