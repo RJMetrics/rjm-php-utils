@@ -445,7 +445,7 @@ function alternate_json_encode($a = false) {
 		}
 
 		if (is_string($a)) {
-			static $jsonReplaces = array(array("\\", "/", "\n", "\t", "\r", "\b", "\f", '"', "\0"), array('\\\\', '\\/', '\\n', '\\t', '\\r', '\\b', '\\f', '\"', '\u0000'));
+			static $jsonReplaces = array(array("\\", "/", "\n", "\t", "\r", "\b", "\f", '"', "\0", "\v"), array('\\\\', '\\/', '\\n', '\\t', '\\r', '\\b', '\\f', '\"', '\u0000', '\u000b'));
 			return '"' . str_replace($jsonReplaces[0], $jsonReplaces[1], $a) . '"';
 		}
 		else
@@ -553,9 +553,9 @@ function json_response(ControllerResponse $cr, $json) {
 }
 
 function convertStringToBoolean($string) {
-	if($string == 'true')
+	if($string == 'true' || $string == '1')
 		return true;
-	elseif($string == 'false')
+	elseif($string == 'false' || $string == '0')
 		return false;
 	return null;
 }
@@ -566,6 +566,7 @@ function makeClosureWrapper($returnValue) {
 	};
 }
 
+// usage:  list($id, $name, $email) = decomposeAssocArray($array, 'id', 'name', 'email')
 function decomposeAssocArray(){
 	$args = func_get_args();
 	$array = array_shift($args);
@@ -576,6 +577,22 @@ function decomposeAssocArray(){
 	
 	return $r;
 }
+
+function slow_death($count, $message=''){
+	global $slow_death_count;
+
+	if (empty($slow_death_count))
+		$slow_death_count = 1000;
+
+	if ($count < $slow_death_count)
+		$slow_death_count = $count;
+
+	$slow_death_count--;
+
+	if ($slow_death_count<1)
+		die($message);
+}
+
 
 /*
 This function should be used, instead of the require_once statement, whenever requiring a file
