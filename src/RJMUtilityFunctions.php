@@ -548,8 +548,8 @@ function is_assoc($arr) { //returns true if $arr is an associative array
     return (is_array($arr) && count(array_filter(array_keys($arr),'is_string')) == count($arr));
 }
 
-function json_response(ControllerResponse $cr, $json) {
-	return $cr->data(array('json' => $json))->view('json');
+function json_response(ControllerResponse $cr, $json, $status = 200) {
+	return $cr->data(array('json' => $json))->status($status)->view('json');
 }
 
 function convertStringToBoolean($string) {
