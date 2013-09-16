@@ -615,7 +615,7 @@ function composer_require_once($lib, $filename){
 	if (stream_resolve_include_path($requiredFile))
 		require_once $requiredFile;
 	else
-		throw new Exception("composer_require_once -> require_once({$requiredFile}): failed to open stream");
+		throw new Exception("composer_require_once -> require_once({$requiredFile}): failed to open stream. Include path = \"" . get_include_path() . "\"");
 
 	set_include_path($originalPath);
 }
