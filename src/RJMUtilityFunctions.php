@@ -446,8 +446,8 @@ function alternate_json_encode($a = false) {
 
 		if (is_string($a)) {
 			static $jsonReplaces = array(
-				array("\\", "/",  "\n", "\t", "\r", "\b", "\f", '"', "\0", "\v", "\a", "\b", "\t", "\f", "\n", "\r", "\e"), 
-				array('\\\\', '\\/', '\\n', '\\t', '\\r', '\\b', '\\f', '\"', '\u0000', '\u000b', '\u0007', '\u0008', '\u0009', '\u000c', '\u000a', '\u000d', '\u001b')
+				array("\\", "/",  "\n", "\t", "\r", "\b", "\f", '"', "\0", "\v", "\e"), 
+				array('\\\\', '\\/', '\\n', '\\t', '\\r', '\\b', '\\f', '\"', '\u0000', '\u000b', '\u001b')
 			);
 			return '"' . str_replace($jsonReplaces[0], $jsonReplaces[1], $a) . '"';
 		}
