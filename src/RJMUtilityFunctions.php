@@ -432,6 +432,8 @@ function diffProperties($a, $b, $depth=0){
 // We may want to use it everywhere. I don't think we've been able to reproduce this on the VM, which might be a clue to the root cause.
 function alternate_json_encode($a = false) {
 
+	static $jsonReplaces = array(array("\\", "/", "\n", "\t", "\r", "\b", "\f", '"', "\0", "\v", "\e", chr(194).chr(155)), array('\\\\', '\\/', '\\n', '\\t', '\\r', '\\b', '\\f', '\"', '\u0000', '\u000b','\u001b', '\u009b'));
+
 	if (is_null($a))
 		return 'null';
 	if ($a === false)
@@ -447,7 +449,9 @@ function alternate_json_encode($a = false) {
 		// Replacing special chartacers:  It's dangerous to go alone! Take this - http://php.net/manual/en/regexp.reference.unicode.php
 		// And this: http://www.codeproject.com/Articles/37735/Searching-Modifying-and-Encoding-Text
 		if (is_string($a)) {
-			static $jsonReplaces = array(array("\\", "/", "\n", "\t", "\r", "\b", "\f", '"', "\0", "\v", "\e", "\p{Cc}"), array('\\\\', '\\/', '\\n', '\\t', '\\r', '\\b', '\\f', '\"', '\u0000', '\u000b','\u001b', '\u009b'));
+			if(!isset($jsonReplaces) {
+				$jsonReplaces = array(array("\\", "/", "\n", "\t", "\r", "\b", "\f", '"', "\0", "\v", "\e"), array('\\\\', '\\/', '\\n', '\\t', '\\r', '\\b', '\\f', '\"', '\u0000', '\u000b','\u001b'));
+			}
 			return '"' . str_replace($jsonReplaces[0], $jsonReplaces[1], $a) . '"';
 		}
 		else
