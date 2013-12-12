@@ -622,5 +622,43 @@ function composer_require_once($lib, $filename){
 	set_include_path($originalPath);
 }
 
+/**
+ * Checks a json object for missing fields and that fields are the correct type.
+ *
+ * $fields is an array mapping field names to an array of constraints. The
+ * restraints can be:
+ *
+ *     - 'required' (boolean, default: false)
+ *     - 'numeric' (boolean, default: false)
+ *
+ * For example:
+ *
+ *     $fields = [
+ *         'fieldname' => ['required' => true],
+ *         'otherfield' => ['required' => false, 'numeric' => true],
+ *     ];
+ *
+ * Will return a map of fields to a human-readable error message about the field.
+ */
+function findJsonErrors(array $fields, stdClass $json) {
+	$errors = [];
+
+	foreach($fields as $field => $constraints) {
+		$required = isset($constraints['required']) && $constraints['required'];
+		$numeric = isset($constraints['numeric']) && $constraints['numeric'];
+
+		if(!isset($json->$field)) {
+			if($required) {
+				$errors[$field] = 'This field is missing';
+			}
+		}
+		elseif($numeric && !is_numeric($json->$field)) {
+			$errors[$field] = "$field must be numeric, got: " . $json->$field;
+		}
+	}
+
+	return $errors;
+}
+
 
 ?>
