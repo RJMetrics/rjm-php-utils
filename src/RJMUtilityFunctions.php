@@ -16,6 +16,17 @@ function cloneArray(array $array) {
 	return $toReturn;
 }
 
+function getRequestEndpoint() {
+	$protocol = "http://";
+
+	if(isset($_SERVER["HTTPS"]))
+		$protocol = "https://";
+
+	$path = parse_url($_SERVER["REQUEST_URI"])["path"];
+
+	return $protocol.$_SERVER["HTTP_HOST"].$path;
+}
+
 function getRealIpAddr() {
 	if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
 		//check ip from share internet
@@ -552,6 +563,19 @@ function is_assoc($arr) { //returns true if $arr is an associative array
 
 function json_response(ControllerResponse $cr, $json, $status = 200) {
 	return $cr->data(array('json' => $json))->status($status)->view('json');
+}
+
+function paginated_json_response(ControllerResponse $cr, array $json, $limit = 10, $offset = 0, $status = 200) {
+	$response = new stdClass();
+	$response->data = array_slice($json, $offset, $limit);
+
+	$nextOffset = $offset+$limit;
+
+	$response->nextPage = getRequestUri()."?limit=".urlencode($limit)."&offset=".urlencode($nextOffset);
+
+	return $cr->data(array('json' => $response))
+		->status($status)
+		->view('json');
 }
 
 function convertStringToBoolean($string) {
