@@ -660,5 +660,17 @@ function findJsonErrors(array $fields, stdClass $json) {
 	return $errors;
 }
 
+/**
+ * This function safely gets a key from an array or returns a default if
+ * the key does not exist.
+ *
+ * PHP will generate a NOTICE error if $key is not in array when you use
+ * the [] syntax. This function allows you to safely get a key from the array.
+ * The third argument is an optional default value that will be returned
+ * if the key is not in the array. It defaults to null.
+ */
+function array_get(array $arr, $key, $default = null) {
+	return isset($arr[$key]) ? $arr[$key] : $default;
+}
 
 ?>
