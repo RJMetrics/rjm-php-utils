@@ -435,8 +435,8 @@ function alternate_json_encode($a = false) {
 	// Replacing special chartacers:  It's dangerous to go alone! Take this - http://php.net/manual/en/regexp.reference.unicode.php
 	// And this: http://www.codeproject.com/Articles/37735/Searching-Modifying-and-Encoding-Text
 	$jsonReplaces = array(
-		array("\\", "/", "\n", "\t", "\r", "\b", "\f", '"', "\0", "\v", "\e", chr(194).chr(155), chr(26), chr(1)),
-		array('\\\\', '\\/', '\\n', '\\t', '\\r', '\\b', '\\f', '\"', '\u0000', '\u000b','\u001b', '\u009b', '\u001a', '\u0001')
+		array("\\", "/", "\n", "\t", "\r", "\b", "\f", '"', "\0", "\v", "\e", chr(194).chr(155), chr(26), chr(1), chr(31)),
+		array('\\\\', '\\/', '\\n', '\\t', '\\r', '\\b', '\\f', '\"', '\u0000', '\u000b','\u001b', '\u009b', '\u001a', '\u0001', '\u001f')
 	);
 
 	if (is_null($a))
