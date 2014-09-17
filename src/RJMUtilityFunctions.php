@@ -678,4 +678,17 @@ function array_get(array $arr, $key, $default = null) {
 	return isset($arr[$key]) ? $arr[$key] : $default;
 }
 
+function splitS3Path($path) {
+	$pattern = '/(s3|s3n):\/\/([^\/]+)\/(.*)/';
+	$matches = [];
+	if(preg_match($pattern, $path, $matches) !== 1) {
+		throw new UnexpectedValueException("Could not split s3 path: '$path'");
+	}
+	return [
+		'prefix' => $matches[1],
+		'bucket' => $matches[2],
+		'key' => $matches[3],
+	];
+}
+
 ?>
