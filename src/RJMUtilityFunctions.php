@@ -675,7 +675,7 @@ function findJsonErrors(array $fields, stdClass $json) {
  * if the key is not in the array. It defaults to null.
  */
 function array_get(array $arr, $key, $default = null) {
-	return isset($arr[$key]) ? $arr[$key] : $default;
+	return array_key_exists($key, $arr) ? $arr[$key] : $default;
 }
 
 ?>
