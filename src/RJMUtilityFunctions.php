@@ -679,7 +679,7 @@ function array_get(array $arr, $key, $default = null) {
 }
 
 /**
- * This function optionally removes argument values from a function call in a stack
+ * This function optionally removes argument values from all function calls in a stack
  * trace. Whenever we log potentially sensitive stack traces, it is prudent to remove
  * argument values.
  */
