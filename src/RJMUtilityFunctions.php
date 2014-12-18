@@ -679,8 +679,8 @@ function array_get(array $arr, $key, $default = null) {
 }
 
 /**
- * This function oprtionally removes argument values from a function call in a stack
- * trace. Whenever we log potentially sensitive stack traces it is prudent to remove
+ * This function optionally removes argument values from a function call in a stack
+ * trace. Whenever we log potentially sensitive stack traces, it is prudent to remove
  * argument values.
  */
 function renderStackTrace($trace, $sanitize = true) {
