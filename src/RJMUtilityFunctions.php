@@ -678,4 +678,50 @@ function array_get(array $arr, $key, $default = null) {
 	return array_key_exists($key, $arr) ? $arr[$key] : $default;
 }
 
+/**
+ * This function oprtionally removes argument values from a function call in a stack
+ * trace. Whenever we log potentially sensitive stack traces it is prudent to remove
+ * argument values.
+ */
+function renderStackTrace($trace, $sanitize = true) {
+
+	$traceString = '';
+
+	foreach ($trace as $i => $stackFrame) {
+		$file = $stackFrame['file'];
+		$lineNum = $stackFrame['line'];
+		$classAndFunction = $stackFrame['class'] . $stackFrame['type'] . $stackFrame['function'];
+		$args = array();
+
+		if (!$sanitize) {
+			foreach ($stackFrame['args'] as $arg) {
+				if (is_string($arg)) {
+						$args[] = "'" . $arg . "'";
+				} elseif (is_array($arg)) {
+						$args[] = 'Array';
+				} elseif (is_null($arg)) {
+						$args[] = 'NULL';
+				} elseif (is_bool($arg)) {
+						$args[] = ($arg) ? 'true' : 'false';
+				} elseif (is_object($arg)) {
+						$args[] = get_class($arg);
+				} elseif (is_resource($arg)) {
+						$args[] = get_resource_type($arg);
+				} else {
+						$args[] = $arg;
+				}
+			}
+		}
+
+		$args = join(', ', $args);
+		$traceString .= "#{$i} {$file}({$lineNum}): {$classAndFunction}({$args})\n";
+
+		if ($i === count($trace) - 1) {
+			$traceString .= '#' . count($trace) . ' {main}';
+		}
+	}
+
+	return $traceString;
+}
+
 ?>
