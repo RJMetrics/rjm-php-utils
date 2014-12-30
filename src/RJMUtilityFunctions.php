@@ -688,8 +688,8 @@ function renderStackTrace($trace, $sanitize = true) {
 	$traceString = '';
 
 	foreach ($trace as $i => $stackFrame) {
-		$file = $stackFrame['file'];
-		$lineNum = $stackFrame['line'];
+		$file = isset($stackFrame['file']) ? $stackFrame['file'] : '[internal function]' ;
+		$lineNum = isset($stackFrame['line']) ? '(' . $stackFrame['line'] . ')' : '';
 		$classAndFunction = $stackFrame['class'] . $stackFrame['type'] . $stackFrame['function'];
 		$args = array();
 
@@ -714,7 +714,7 @@ function renderStackTrace($trace, $sanitize = true) {
 		}
 
 		$args = join(', ', $args);
-		$traceString .= "#{$i} {$file}({$lineNum}): {$classAndFunction}({$args})\n";
+		$traceString .= "#{$i} {$file}{$lineNum}: {$classAndFunction}({$args})\n";
 
 		if ($i === count($trace) - 1) {
 			$traceString .= '#' . count($trace) . ' {main}';
