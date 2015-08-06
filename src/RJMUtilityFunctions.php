@@ -43,10 +43,10 @@ function compactStackTrace($removeThisCall = true){
 	foreach ($dbg as $d){
 		foreach ($fields as $f)
 			$d[$f] =  nu($d[$f]) ?: 'N/A';
-		$r .= "\n:.:{$d['file']}:{$d['line']}  {$d['class']} -> {$d['function']}";
+		$r .= ":.:{$d['file']}:{$d['line']}  {$d['class']} -> {$d['function']}";
 	}
 		
-	$r .= "\n:.:\n";
+	$r .= ":.:";
 	return $r;
 }
 
