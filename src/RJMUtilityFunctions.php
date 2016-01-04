@@ -1,6 +1,6 @@
 <?php
 
-//deep clone	
+//deep clone
 function cloneArray(array $array) {
 	$toReturn = array();
 
@@ -26,7 +26,7 @@ function getRealIpAddr() {
 	} else {
 		$ip=$_SERVER['REMOTE_ADDR'];
 	}
-	
+
 	return $ip;
 }
 
@@ -35,17 +35,17 @@ function getRealIpAddr() {
 function compactStackTrace($removeThisCall = true){
 	$dbg = debug_backtrace();
 	$r = '';
-	
+
 	if ($removeThisCall) array_shift($dbg);
-	
+
 	$fields = array('file', 'line', 'class', 'function');
-		
+
 	foreach ($dbg as $d){
 		foreach ($fields as $f)
 			$d[$f] =  nu($d[$f]) ?: 'N/A';
 		$r .= "\n:.:{$d['file']}:{$d['line']}  {$d['class']} -> {$d['function']}";
 	}
-		
+
 	$r .= "\n:.:\n";
 	return $r;
 }
@@ -69,31 +69,31 @@ function equivalent_in_array($needle, $haystack){
 /*** little experiment by Bill ***/
 
 class Fluenter{
-	
+
 	private $o;
 	private $methodsOnlyMode; // If TRUE, you can only call methods using this fluenter. Otherwise, you can assign to a property. TRUE by default.
-	
+
 	function __construct($o = null, $methodsOnlyMode = true) {
 		$this->o = $o ?: new stdClass();
 		$this->methodsOnlyMode = $methodsOnlyMode;
 	}
-	
+
 	public function __call($name, $args){
 		if (method_exists($this->o, $name))
 			call_user_func_array(array($this->o, $name), $args);
 		elseif ($this->methodsOnlyMode)
 			throw new Exception("Method '{$name}' does not exist. If you are trying to assign to a property, set methodsOnlyMode to FALSE.");
-		else 
+		else
 			$this->o->$name = reset($args);
-			
+
 		return $this;
 	}
-	
+
 	public function __get($member){
 		if ($member == 'exit')
-			return $this->o;		
+			return $this->o;
 		throw new Exception("Fluenter does not support getting properties.");
-	}	
+	}
 }
 
 function fluent($o, $methodsOnly = true){
@@ -102,7 +102,7 @@ function fluent($o, $methodsOnly = true){
 
 class ArrayMapper{
 	private $array;
-	
+
 	public function __construct(array $array){
 		$this->array = $array;
 	}
@@ -114,22 +114,22 @@ class ArrayMapper{
 					return call_user_func_array(array($o, $name), $args);
 				else
 					throw new Exception("Method '{$name}' does not exist.");
-			}, 
+			},
 			$this->array);
-	
+
 		return $this;
 	}
 
-	
-	public function __get($member){		
+
+	public function __get($member){
 		if ($member == 'exit')
 			return $this->array;
 		throw new Exception("ArrayMapper does not support getting properties.");
-	}	
-	
+	}
+
 }
 
-//usage example: 
+//usage example:
 //assuming that $dashboardItems is an array of DashboardItems the line below will reurn an array of all their ids
 //$dashboardItemIds = mapArray($dashboardItems)->getId()->exit;
 function mapArray($array){
@@ -149,7 +149,7 @@ function startsWith($haystack, $needle, $case=true) {
 				return $n;
 		return false;
 	}
-				
+
 	if ($case)
 		return strncmp($haystack, $needle, mb_strlen($needle)) == 0;
 	else
@@ -162,7 +162,7 @@ function endsWith($haystack, $needle, $case=true) {
 			if (endsWith($haystack, $n))
 				return $n;
 		return false;
-	}	
+	}
 	return startsWith(strrev($haystack),strrev($needle),$case);
 }
 
@@ -181,7 +181,7 @@ function array_parallel(){
 			$i[] = nu($a[$k]);
 		$r[$k] = $i;
 	}
-	return $r;	
+	return $r;
 }
 
 function rotate_matrix($matrix){
@@ -200,39 +200,39 @@ function _pr($o, $max=null, $print=true){
 
 //recursive function used by _pr (above)
 //modify this to provide custom outputs for specific classes
-function __pr($o, $depth, $max){	
-		
+function __pr($o, $depth, $max){
+
 	if (!is_null($max) && ($depth > $max)) return '-=[limit reached]=-';
-	
+
 	if (is_a($o, 'Logger'))
-		return "[Logger]";  
+		return "[Logger]";
 	if (is_bool($o))
 		return $o ? '[TRUE]' : '[FALSE]';
 	if (is_a($o, 'Closure'))
 		return '[Closure]';
-		
-	
+
+
 	$c = "array";
 	if (is_object($o)){
 		$c = get_class($o);
 		$o = (array)($o);
 	}
-	
+
 	if (is_array($o)){
 		$depth++;
 		$indent = '';
 		for($i=0; $i<$depth; $i++)
-			$indent .= "  ";		
+			$indent .= "  ";
 		$r = array();
-		$r[] = "{$c}\n";		
+		$r[] = "{$c}\n";
 		foreach ($o as $k => $v){
 			$k = ltrim($k, chr(0)); //casting from array prepends class name and NULL chars to property name. This looks a little better
-			$k = str_replace(chr(0), '.', $k); 
-			$r[] = "{$indent}[$k] => " . __pr($v, $depth, $max) . "\n";				
+			$k = str_replace(chr(0), '.', $k);
+			$r[] = "{$indent}[$k] => " . __pr($v, $depth, $max) . "\n";
 		}
 		return implode('', $r);
 	}else
-		return print_r($o, true);		
+		return print_r($o, true);
 }
 
 // turns this: array(1,2,array(3,4, array(5,6,7), 8), 9);
@@ -249,25 +249,25 @@ function array_flatten($array){
 
 function _timerStart($key){
 	global $_gTimers;
-	
+
 	if (!$_gTimers) $_gTimers = array();
-	
+
 	if (empty($_gTimers[$key]))
 		$_gTimers[$key] = array(microtime(true),0, 1);
 	else{
 		$_gTimers[$key][0] = microtime(true);
 		$_gTimers[$key][2] = 1;
 	}
-	
+
 	return $_gTimers[$key][0];
 }
 
 function _timerDuration($key){
 	global $_gTimers;
-	
+
 	if (!$_gTimers) return 0;
-	
-	if ($_gTimers[$key][2])	
+
+	if ($_gTimers[$key][2])
 		return (microtime(true) - $_gTimers[$key][0]) + $_gTimers[$key][1];
 	else
 		return $_gTimers[$key][1];
@@ -276,7 +276,7 @@ function _timerDuration($key){
 function _timerDurationAndReset($key) {
 	$time = _timerDuration($key);
 	_timerReset($key);
-	
+
 	return $time;
 }
 
@@ -290,12 +290,12 @@ function _timerReset($key) {
 
 function _timerStop($key){
 	global $_gTimers;
-	
+
 	if (!$_gTimers) return 0;
 
 	$_gTimers[$key][2] = 0;
 	$_gTimers[$key][1] += microtime(true) - $_gTimers[$key][0];
-		
+
 	return $_gTimers[$key][1];
 }
 
@@ -305,13 +305,13 @@ function _timerPrint($key){
 
 function _timerGetStopped($min = 0){
 	global $_gTimers;
-	
+
 	$r = array();
-	
+
 	foreach ($_gTimers as $k => $v)
 		if (!$v[2] && ($v[1] > $min))
 			$r[$k] = $v[1];
-	
+
 	return $r;
 }
 
@@ -328,7 +328,7 @@ function valuesAreHex(array $candidates) {
 	if(!count($candidates))
 		return false; //can't know
 	foreach($candidates as $candidate) {
-		if(mb_strlen(preg_replace("/[0-9a-f]/","",$candidate)) != 0) 
+		if(mb_strlen(preg_replace("/[0-9a-f]/","",$candidate)) != 0)
 			return false;
 	}
 	return true;
@@ -353,18 +353,18 @@ function isExpired($month, $year) {
 function niceDurationOfSeconds($seconds){
 	if($seconds === 0) //special case prevents div by zero below
 		return "0 seconds";
-	
+
 	$per = array(
 		'decade' => 60*60*24*356*10,
 		'year' => 60*60*24*356,
 		'month' => 60*60*24*(365/12),
-		'week' => 60*60*24*7, 
-		'day' => 60*60*24, 
-		'hour' => 60*60, 
-		'minute' => 60, 
-		'second' => 1		
+		'week' => 60*60*24*7,
+		'day' => 60*60*24,
+		'hour' => 60*60,
+		'minute' => 60,
+		'second' => 1
 		);
-	
+
 	foreach ($per as $k => $v){
 		if ($seconds >= $v){
 			$n = round($seconds/$v);
@@ -377,32 +377,32 @@ function niceDurationOfSeconds($seconds){
 
 function niceDuration($d1, $d2=null){
 	$d = strtotime($d1);
-	if (!$d) return $d1; 
-	
+	if (!$d) return $d1;
+
 	if ($d2==null)
 		$d2 = date('Y-M-d H:i:s');
 
-	$d2 = strtotime($d2);		
+	$d2 = strtotime($d2);
 	$dd = abs($d - $d2);
-	
-	return niceDurationOfSeconds($dd);		
+
+	return niceDurationOfSeconds($dd);
 }
 
 //given two objects, this function will iterate the objects' properties recursively and output any differences
 function diffProperties($a, $b, $depth=0){
 	$output = array();
-	
+
 	$hasProperties = function($o){ return is_object($o) || is_array($o); };
-	
+
 	if (!$hasProperties($a))
 		$a = new stdClass();
 	if (!$hasProperties($b))
 		$b = new stdClass();
-	
-	
+
+
 	$union = array_merge(get_object_vars(is_array($a) ? (object) $a : $a), get_object_vars(is_array($b) ? (object) $b : $b));
 	ksort($union);
-	
+
 	$indentString = "\t";
 	$indent = '';
 	for($i=0; $i<$depth; $i++)
@@ -411,9 +411,9 @@ function diffProperties($a, $b, $depth=0){
 	foreach ($union as $k => $v){
 		$v1 = isset($a->$k) ? $a->$k : '**NOT SET**';
 		$v2 = isset($b->$k) ? $b->$k : '**NOT SET**';
-		
+
 		$keyString = "{$indent}[{$k}] =>\n";
-		
+
 		if ($hasProperties($v1) || $hasProperties($v2)){
 			if ($sub = diffProperties ($v1, $v2, $depth+1))
 				$output[] = $keyString . $sub;
@@ -581,7 +581,7 @@ function decomposeAssocArray(){
 	$r = array();
 	foreach ($args as $key)
 		$r[] = $array[$key];
-	
+
 	return $r;
 }
 
@@ -724,4 +724,32 @@ function renderStackTrace($trace, $sanitize = true) {
 	return $traceString;
 }
 
+function get_in($map, array $ks, $notFound = null) {
+	foreach($ks as $key) {
+		if (is_object($map)) {
+			$map = (array) $map;
+		}
+
+		if(is_array($map) && array_key_exists($key, $map)) {
+			$map = $map[$key];
+		} else {
+			return $notFound;
+		}
+	}
+	return $map;
+}
+
+function env(array $ks, $notFound = null) {
+	if (func_num_args() <= 1) {
+		$notFound = new OutOfBoundsException("Not found in ENVIRONMENT");
+	}
+
+	$out = get_in($GLOBALS['environment'], $ks, $notFound);
+
+	if($out instanceof Exception) {
+		throw $out;
+	} else {
+		return $out;
+	}
+}
 ?>
