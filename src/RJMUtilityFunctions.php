@@ -57,7 +57,7 @@ function compactStackTrace($removeThisCall = true)
 //otherwise default to ===
 function equals($a, $b)
 {
-	if (method_exists($a, 'equals'))
+	if (is_object($a) && method_exists($a, 'equals'))
 		return $a->equals($b);
 	else
 		return $a === $b;
@@ -153,7 +153,7 @@ function mapArray($array)
 
 /************************/
 
-function nu(&$v)
+function nu(&$v = null)
 {
 	return isset($v) ? $v : null;
 }
