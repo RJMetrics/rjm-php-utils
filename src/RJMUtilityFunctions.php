@@ -690,7 +690,10 @@ function renderStackTrace($trace, $sanitize = true) {
 	foreach ($trace as $i => $stackFrame) {
 		$file = isset($stackFrame['file']) ? $stackFrame['file'] : '[internal function]' ;
 		$lineNum = isset($stackFrame['line']) ? '(' . $stackFrame['line'] . ')' : '';
-		$classAndFunction = $stackFrame['class'] . $stackFrame['type'] . $stackFrame['function'];
+		$className = isset($stackFrame['class']) ? $stackFrame['class'] : '';
+		$callType = isset($stackFrame['type']) ? $stackFrame['type'] : '';
+		$functionName = isset($stackFrame['function']) ? $stackFrame['function'] : '[unknown function]';
+		$classAndFunction = $className . $callType . $functionName;
 		$args = array();
 
 		if (!$sanitize) {
