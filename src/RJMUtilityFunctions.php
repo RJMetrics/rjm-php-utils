@@ -502,16 +502,34 @@ function alternate_json_encode($a = false)
 		return alternate_json_encode($a->jsonSerialize());
 	}
 
+	// Track if the original value was an object
+	$wasObject = false;
 	// Check if $a is an array before using array functions to avoid PHP 8.1+ deprecation warnings
 	if (!is_array($a)) {
+		$wasObject = true;
+		// Cast to array to get all properties, then filter out private/protected ones
 		$a = (array) $a;
+		// Filter out private and protected properties (they have null bytes in keys)
+		$a = array_filter($a, function($key) {
+			return strpos($key, "\0") === false;
+		}, ARRAY_FILTER_USE_KEY);
 	}
 
-	$isList = true;
-	for ($i = 0, reset($a); $i < count($a); $i++, next($a)) {
-		if (key($a) !== $i) {
-			$isList = false;
-			break;
+	// Empty objects should return '{}' not '[]'
+	if ($wasObject && empty($a)) {
+		return '{}';
+	}
+
+	// Objects should always be encoded as objects (with string keys), not arrays
+	// This matches json_encode() behavior where objects with numeric properties
+	// are encoded as {"0":value,"1":value} not [value,value]
+	$isList = !$wasObject;
+	if ($isList) {
+		for ($i = 0, reset($a); $i < count($a); $i++, next($a)) {
+			if (key($a) !== $i) {
+				$isList = false;
+				break;
+			}
 		}
 	}
 	$result = array();

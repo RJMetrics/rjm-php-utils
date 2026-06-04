@@ -41,6 +41,18 @@ class RJMUtilityFunctionsTest extends PHPUnit_Framework_TestCase {
 		}
 	}
 
+	public function test_alternate_json_encode_matches_json_encode() {
+		$tests = array(
+			array(1, 2, 3, 'test', "\"'"),
+			array('a' => 333, "\"'\nx" => '1983-11-23', 44, 'fff'),
+			new stdClass(),
+		);
+
+		foreach ($tests as $test) {
+			$this->assertSame(json_encode($test), alternate_json_encode($test));
+		}
+	}
+
 	public function test_env() {
 		$GLOBALS['environment'] = ["a" => "b", "c" => ["d" => "e"]];
 		try {
